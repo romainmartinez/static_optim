@@ -11,6 +11,7 @@ dependencies:
   - numpy
   - scipy
   - cyipopt
+  - ipopt
   - pyomeca
   - matplotlib
   - opensim
