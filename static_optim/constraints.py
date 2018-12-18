@@ -19,13 +19,13 @@ class ConstraintAccelerationTarget:
             self.actual_qddot[idx_q] - qddot_from_muscles.get(idx_q)
             for idx_q in range(qddot_from_muscles.size())
         ]
-        if idx:
+        if idx is not None:
             return const[idx]
         else:
             return const
 
-    def jocabian(self, x):
-        jac = np.array([self.n_dof, self.n_actuators])
+    def jacobian(self, x):
+        jac = np.ndarray([self.n_dof, self.n_actuators])
         for idof in range(self.n_dof):
             jac[idof, :] = approx_fprime(x, self.constraints, 1e-10, idof)
         return jac

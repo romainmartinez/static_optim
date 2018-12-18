@@ -4,13 +4,13 @@ Dynamic models.
 These are the actual classes to send to IPOPT.
 """
 
-from static_optim.kinematic import KinematicModel
-from static_optim.forces import ResidualForces, ExternalForces
-from static_optim.objective import ObjMinimizeActivation
-from static_optim.constraints import ConstraintAccelerationTarget
-
-import opensim as osim
 import numpy as np
+import opensim as osim
+
+from static_optim.constraints import ConstraintAccelerationTarget
+from static_optim.forces import ResidualForces, ExternalForces
+from static_optim.kinematic import KinematicModel
+from static_optim.objective import ObjMinimizeActivation
 
 
 class ClassicalStaticOptimization(
@@ -57,9 +57,6 @@ class ClassicalStaticOptimization(
         return self.state.getUDot()
 
 
-# ClassicalOptimizationLinearConstraints intends to mimic the classical approach but with the constraints linearized.
-# It makes the assumption that muscle length is constant at a particular position and velocity, whatever the muscle
-# activation.
 class ClassicalOptimizationLinearConstraints(
     KinematicModel,
     ObjMinimizeActivation,
@@ -136,13 +133,14 @@ class ClassicalOptimizationLinearConstraints(
 
     def constraints(self, x, idx=None):
         x_tp = x.reshape((x.shape[0], 1))
-        x_mul = np.array((self.constraint_matrix.shape[0], x_tp.shape[1]))
+        x_mul = np.ndarray((self.constraint_matrix.shape[0], x_tp.shape[1]))
+        np.matmul(self.constraint_matrix, x_tp, x_mul)
         x_constraint = x_mul.ravel()
-        c = x_constraint + self.constraint_vector
-        if idx:
-            return c[idx]
+        const = x_constraint + self.constraint_vector
+        if idx is not None:
+            return const[idx]
         else:
-            return c
+            return const
 
     def linear_constraints(self):
         fs = self.model.getForceSet()
