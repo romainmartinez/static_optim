@@ -3,7 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pyomeca import Analogs3d
 
-from static_optim.dynamic_models import ClassicalStaticOptimization, ClassicalOptimizationLinearConstraints
+from static_optim.dynamic_models import (
+    ClassicalStaticOptimization,
+    ClassicalOptimizationLinearConstraints,
+    LocalOptimizationLinearConstraints,
+)
 
 setup = {
     "model": "template/arm26.osim",
@@ -13,9 +17,17 @@ setup = {
 }
 
 # static optimization model
+
 # model = ClassicalStaticOptimization(setup["model"], setup["mot"], setup["filter_param"])
 
-model = ClassicalOptimizationLinearConstraints(
+# model = ClassicalOptimizationLinearConstraints(
+#     setup["model"],
+#     setup["mot"],
+#     setup["filter_param"],
+#     muscle_physiology=setup["muscle_physiology"],
+# )
+
+model = LocalOptimizationLinearConstraints(
     setup["model"],
     setup["mot"],
     setup["filter_param"],
